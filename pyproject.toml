@@ -1,0 +1,72 @@
+[project]
+name = "pagination"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "asyncpg>=0.30.0",
+    "fastapi>=0.117.1",
+    "orjson>=3.11.3",
+    "python-dotenv>=1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.12",
+]
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors (basic style issues like spacing, indentation, unused whitespace)
+    "W",     # pycodestyle warnings (non-critical style warnings)
+    "F",     # pyflakes (logic issues like unused variables, undefined names, duplicate imports)
+    "I",     # isort (import sorting: ensures deterministic and clean import ordering)
+    "B",     # flake8-bugbear (common bug patterns and bad practices, e.g., mutable defaults, unsafe comparisons)
+    "C4",    # flake8-comprehensions (suggests more Pythonic list/set/dict comprehensions)
+    "UP",    # pyupgrade (ensures modern Python 3.9+ syntax, avoids deprecated code patterns)
+    "S608",  # possible SQL injection vector through string-based query construction
+]
+
+ignore = [
+    "E501",  # line too long (formatter handles wrapping, so no need to lint)
+    "ANN",   # type annotation rules (too strict for legacy; will enforce via mypy instead)
+    "D",     # docstring style (legacy code often lacks docstrings, skip for now)
+    "B008",  # function call in argument defaults (can be noisy; revisit later)
+    "C901",  # function is too complex (not actionable right now; will revisit with refactors)
+    "W191",  # indentation contains tabs (formatter normalizes this anyway)
+]
+
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
