@@ -9,10 +9,14 @@ dependencies = [
     "fastapi>=0.117.1",
     "orjson>=3.11.3",
     "python-dotenv>=1.1.1",
+    "uvicorn>=0.37.0",
 ]
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.1",
+    "matplotlib>=3.10.6",
+    "rich>=14.1.0",
     "ruff>=0.12.12",
 ]
 
