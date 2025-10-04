@@ -4,7 +4,7 @@ import json
 from fastapi import Depends, FastAPI, Query
 from fastapi.responses import ORJSONResponse
 
-from db import get_db
+from api.db import get_db
 
 app = FastAPI(default_response_class=ORJSONResponse)
 
@@ -68,24 +68,31 @@ async def cursor_pagination(
     limit: int = Query(10, le=100),
     after: str | None = None,
 ):
-    params = []
-    condition = ""
     if after:
         cursor = decode_cursor(after)
-        condition = "WHERE (created_at, id) < ($1, $2)"
-        params = [cursor["created_at"], cursor["id"]]
+        rows = await conn.fetch(
+            """
+            SELECT id, name, age, city, created_at
+            FROM pagination_dataset
+            WHERE (created_at, id) < ($1, $2)
+            ORDER BY created_at DESC, id DESC
+            LIMIT $3
+            """,
+            cursor["created_at"],
+            cursor["id"],
+            limit,
+        )
+    else:
+        rows = await conn.fetch(
+            """
+            SELECT id, name, age, city, created_at
+            FROM pagination_dataset
+            ORDER BY created_at DESC, id DESC
+            LIMIT $1
+            """,
+            limit,
+        )
 
-    rows = await conn.fetch(
-        f"""
-        SELECT id, name, age, city, created_at
-        FROM pagination_dataset
-        {condition}
-        ORDER BY created_at DESC, id DESC
-        LIMIT $3
-        """,
-        *params,
-        limit,
-    )
 
     end_cursor = None
     has_next_page = False
@@ -118,23 +125,28 @@ async def keyset_pagination(
     limit: int = Query(10, le=100),
     last_id: int | None = None,
 ):
-    condition = ""
-    params = []
     if last_id:
-        condition = "WHERE id > $1"
-        params.append(last_id)
-
-    rows = await conn.fetch(
-        f"""
-        SELECT id, name, age, city, created_at
-        FROM pagination_dataset
-        {condition}
-        ORDER BY id
-        LIMIT $2
-        """,
-        *params,
-        limit,
-    )
+        rows = await conn.fetch(
+            """
+            SELECT id, name, age, city, created_at
+            FROM pagination_dataset
+            WHERE id > $1
+            ORDER BY id
+            LIMIT $2
+            """,
+            last_id,
+            limit,
+        )
+    else:
+        rows = await conn.fetch(
+            """
+            SELECT id, name, age, city, created_at
+            FROM pagination_dataset
+            ORDER BY id
+            LIMIT $1
+            """,
+            limit,
+        )
 
     next_last_id = rows[-1]["id"] if rows else None
     return {"data": rows, "next_last_id": next_last_id}
