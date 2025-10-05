@@ -13,7 +13,10 @@ It includes implementations of each pagination style, a dataset population scrip
 uv sync
 ```
 
-### 2. Start FastAPI server
+### 2. Populate .env
+Taking reference from [`.env.example`](.env.example) file make your own `.env` file.
+
+### 3. Start FastAPI server
 
 ```bash
 uv run fastapi dev api/main.py
